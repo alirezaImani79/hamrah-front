@@ -7,6 +7,7 @@ import {
   getTimeLeft,
   type TimeLeft,
 } from "@/lib/launch";
+import { toPersianDigits } from "@/lib/format";
 
 const UNITS: { key: keyof TimeLeft; label: string }[] = [
   { key: "days", label: "روز" },
@@ -17,10 +18,7 @@ const UNITS: { key: keyof TimeLeft; label: string }[] = [
 
 /** Persian (Farsi) digits, always two characters wide. */
 function toFa(n: number): string {
-  return n.toLocaleString("fa-IR", {
-    minimumIntegerDigits: 2,
-    useGrouping: false,
-  });
+  return toPersianDigits(String(n).padStart(2, "0"));
 }
 
 export default function CountdownTimer() {
