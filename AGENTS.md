@@ -6,6 +6,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 Notable change already in play: **Middleware is now `proxy.ts`** (project root, exports a `proxy` function + `config.matcher`). See `node_modules/next/dist/docs/01-app/01-getting-started/16-proxy.md`.
 <!-- END:nextjs-agent-rules -->
 
+# Git workflow
+
+Work directly on `master`. Do **not** create feature branches — commit (and merge, when asked) straight to `master`.
+
 # Backend API
 
 The frontend talks to the Laravel backend at **`https://hamrah.test`** (override with `NEXT_PUBLIC_API_BASE_URL`).
