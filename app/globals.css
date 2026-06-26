@@ -154,6 +154,15 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4 preflight drops the implicit cursor on buttons; restore a
+     pointer cursor for every interactive element (skipping disabled ones). */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
 }
 
 /* Soft floating color glows behind the hero. */
