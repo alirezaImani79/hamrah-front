@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { ArrowLeft, Sprout } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import AuthNavButton from "@/components/AuthNavButton";
 import CountdownTimer from "@/components/CountdownTimer";
 
 const navLinks = [
@@ -43,15 +43,7 @@ export default function Hero() {
               {link.label}
             </a>
           ))}
-          <Link
-            href="/login"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "h-9 rounded-full px-5"
-            )}
-          >
-            ورود / ثبت‌نام
-          </Link>
+          <AuthNavButton />
         </div>
       </nav>
 
