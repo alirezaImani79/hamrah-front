@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowLeft, Sprout } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -42,15 +43,15 @@ export default function Hero() {
               {link.label}
             </a>
           ))}
-          <a
-            href="#waitlist"
+          <Link
+            href="/login"
             className={cn(
               buttonVariants({ variant: "default" }),
               "h-9 rounded-full px-5"
             )}
           >
-            عضویت
-          </a>
+            ورود / ثبت‌نام
+          </Link>
         </div>
       </nav>
 
