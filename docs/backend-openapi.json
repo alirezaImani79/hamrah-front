@@ -180,6 +180,110 @@
                 ]
             }
         },
+        "/api/v1/identity": {
+            "get": {
+                "tags": [
+                    "Identity"
+                ],
+                "summary": "Get the identity verification status",
+                "description": "Show the authenticated user's identity verification status.",
+                "operationId": "identityStatus",
+                "responses": {
+                    "200": {
+                        "description": "Current status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/identity/verify": {
+            "post": {
+                "tags": [
+                    "Identity"
+                ],
+                "summary": "Submit identity information for verification",
+                "description": "Stores the user details and documents, marks the account as \"verifying\", and dispatches a background job that compares the data with a vision model.",
+                "operationId": "submitIdentityVerification",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubmitIdentityVerificationInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Submitted for verification",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Verification already in progress or completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/newsletter": {
             "get": {
                 "tags": [
@@ -323,6 +427,55 @@
                 },
                 "type": "object"
             },
+            "SubmitIdentityVerificationInput": {
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "national_code",
+                    "birth_date",
+                    "gender",
+                    "national_card_image",
+                    "face_image"
+                ],
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "example": "Ali"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Imani"
+                    },
+                    "national_code": {
+                        "type": "string",
+                        "example": "0012345678"
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-05-21"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "male",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "national_card_image": {
+                        "description": "Photo of the national ID card.",
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "face_image": {
+                        "description": "Selfie of the user.",
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "properties": {
                     "id": {
@@ -355,6 +508,60 @@
                     "newsletter_subscribed_at": {
                         "type": "string",
                         "format": "date-time",
+                        "nullable": true
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "Ali",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Imani",
+                        "nullable": true
+                    },
+                    "national_code": {
+                        "type": "string",
+                        "example": "0012345678",
+                        "nullable": true
+                    },
+                    "birth_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-05-21",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "male",
+                        "nullable": true,
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "identity_status": {
+                        "type": "string",
+                        "example": "verifying",
+                        "enum": [
+                            "pending",
+                            "verifying",
+                            "verified",
+                            "rejected"
+                        ]
+                    },
+                    "is_identity_verified": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "identity_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "identity_rejection_reason": {
+                        "type": "string",
+                        "example": "The selfie does not match the card photo.",
                         "nullable": true
                     },
                     "created_at": {
@@ -445,6 +652,11 @@
                                 "type": "string",
                                 "example": "Bearer"
                             },
+                            "is_new_user": {
+                                "description": "True when this OTP verification registered a brand-new user, signalling the client to show the identity completion flow.",
+                                "type": "boolean",
+                                "example": false
+                            },
                             "user": {
                                 "$ref": "#/components/schemas/User"
                             }
@@ -468,6 +680,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Identity",
+            "description": "Identity"
         },
         {
             "name": "Newsletter",
