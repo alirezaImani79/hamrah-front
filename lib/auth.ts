@@ -58,6 +58,11 @@ export function getMe(token: string): Promise<User> {
   return apiFetch<User>("/api/v1/auth/me", { token });
 }
 
+/** Subscribe the authenticated user to the SMS newsletter; returns the updated user. */
+export function subscribeNewsletter(token: string): Promise<User> {
+  return apiFetch<User>("/api/v1/newsletter/subscribe", { method: "POST", token });
+}
+
 /** Revoke the current bearer token server-side. */
 export function logout(token: string): Promise<null> {
   return apiFetch<null>("/api/v1/auth/logout", { method: "POST", token });
