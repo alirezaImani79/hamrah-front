@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { AuthProvider } from "@/components/auth/auth-provider";
 
 // Vazirmatn drives the whole UI font (Persian + Latin). Binding it to the
 // --font-sans CSS variable means shadcn's `font-sans` / `font-heading` tokens
@@ -53,7 +54,9 @@ export default function RootLayout({
       className={`${vazirmatn.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
       </body>
     </html>
   );
