@@ -17,6 +17,23 @@ export const API_BASE_URL =
 /** Name of the cookie that holds the Sanctum bearer token. */
 export const AUTH_COOKIE = "hamrah_token";
 
+export type Gender = "male" | "female";
+
+/** Identity verification lifecycle: never submitted → under review → done. */
+export type IdentityStatus = "pending" | "verifying" | "verified" | "rejected";
+
+export type Province = {
+  id: number;
+  name: string;
+  code: string;
+};
+
+export type City = {
+  id: number;
+  name: string;
+  province_id: number;
+};
+
 export type User = {
   id: number;
   phone_number: string;
@@ -25,6 +42,21 @@ export type User = {
   phone_verified_at: string | null;
   is_subscribed_to_newsletter: boolean;
   newsletter_subscribed_at: string | null;
+  // Identity / onboarding profile — all null until the user completes onboarding.
+  first_name: string | null;
+  last_name: string | null;
+  national_code: string | null;
+  birth_date: string | null;
+  gender: Gender | null;
+  province_id: number | null;
+  city_id: number | null;
+  address: string | null;
+  province: Province | null;
+  city: City | null;
+  identity_status: IdentityStatus;
+  is_identity_verified: boolean;
+  identity_verified_at: string | null;
+  identity_rejection_reason: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -32,6 +64,8 @@ export type User = {
 export type AuthData = {
   token: string;
   token_type: string;
+  /** True when this OTP verify registered a brand-new user → start onboarding. */
+  is_new_user: boolean;
   user: User;
 };
 
@@ -81,8 +115,12 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const { method = "GET", body, token } = options;
 
+  // FormData (file uploads) must go out raw so the browser sets the multipart
+  // boundary itself; everything else is JSON.
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
+
   const headers: Record<string, string> = { Accept: "application/json" };
-  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (body !== undefined && !isFormData) headers["Content-Type"] = "application/json";
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   let response: Response;
@@ -90,7 +128,12 @@ export async function apiFetch<T>(
     response = await fetch(`${API_BASE_URL}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body:
+        body === undefined
+          ? undefined
+          : isFormData
+            ? (body as FormData)
+            : JSON.stringify(body),
     });
   } catch {
     throw new ApiError("ارتباط با سرور برقرار نشد؛ اتصال اینترنتت رو بررسی کن.", 0);
