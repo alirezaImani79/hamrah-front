@@ -61,6 +61,20 @@ export type User = {
   updated_at: string;
 };
 
+export type Vehicle = {
+  id: number;
+  /** License plate, e.g. "12 ج 345 67". */
+  number: string;
+  /** A preferred name the user chose for the vehicle. */
+  name: string;
+  seats: number;
+  color: string;
+  /** The vehicle model name, e.g. "Peugeot 206". */
+  model: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type AuthData = {
   token: string;
   token_type: string;
@@ -99,7 +113,7 @@ export class ApiError extends Error {
 }
 
 type FetchOptions = {
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
   /** Sanctum bearer token to send as `Authorization: Bearer …`. */
   token?: string | null;
