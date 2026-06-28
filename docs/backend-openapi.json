@@ -490,6 +490,285 @@
                     }
                 ]
             }
+        },
+        "/api/v1/vehicles": {
+            "get": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "List the authenticated user's vehicles",
+                "description": "List the authenticated user's vehicles.",
+                "operationId": "listVehicles",
+                "responses": {
+                    "200": {
+                        "description": "List of vehicles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VehicleCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Attach a new vehicle",
+                "description": "Attach a new vehicle to the authenticated user.",
+                "operationId": "createVehicle",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreVehicleInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Vehicle created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VehicleResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/vehicles/{vehicle}": {
+            "get": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Show a vehicle",
+                "description": "Show one of the authenticated user's vehicles.",
+                "operationId": "showVehicle",
+                "parameters": [
+                    {
+                        "name": "vehicle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vehicle details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VehicleResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Update a vehicle",
+                "description": "Update one of the authenticated user's vehicles.",
+                "operationId": "updateVehicle",
+                "parameters": [
+                    {
+                        "name": "vehicle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateVehicleInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vehicle updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VehicleResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Delete a vehicle",
+                "description": "Detach (delete) one of the authenticated user's vehicles.",
+                "operationId": "deleteVehicle",
+                "parameters": [
+                    {
+                        "name": "vehicle",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vehicle deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -586,6 +865,139 @@
                         "description": "Selfie of the user.",
                         "type": "string",
                         "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreTripInput": {
+                "required": [
+                    "vehicle_id",
+                    "origin_lat",
+                    "origin_lng",
+                    "destination_lat",
+                    "destination_lng",
+                    "departure_at",
+                    "empty_seats",
+                    "trunk_empty"
+                ],
+                "properties": {
+                    "vehicle_id": {
+                        "description": "A vehicle belonging to the authenticated user.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "origin_lat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 35.6892,
+                        "maximum": 90,
+                        "minimum": -90
+                    },
+                    "origin_lng": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 51.389,
+                        "maximum": 180,
+                        "minimum": -180
+                    },
+                    "destination_lat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 32.6539,
+                        "maximum": 90,
+                        "minimum": -90
+                    },
+                    "destination_lng": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 51.666,
+                        "maximum": 180,
+                        "minimum": -180
+                    },
+                    "departure_at": {
+                        "description": "When the trip departs; must be in the future.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-07-01 08:30:00"
+                    },
+                    "empty_seats": {
+                        "type": "integer",
+                        "example": 3,
+                        "maximum": 100,
+                        "minimum": 1
+                    },
+                    "trunk_empty": {
+                        "description": "Whether the vehicle trunk is empty for luggage.",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreVehicleInput": {
+                "required": [
+                    "number",
+                    "name",
+                    "seats",
+                    "color",
+                    "model"
+                ],
+                "properties": {
+                    "number": {
+                        "description": "License plate of the vehicle.",
+                        "type": "string",
+                        "example": "12 ج 345 67"
+                    },
+                    "name": {
+                        "description": "A preferred name chosen by the user.",
+                        "type": "string",
+                        "example": "Daily driver"
+                    },
+                    "seats": {
+                        "type": "integer",
+                        "example": 4,
+                        "maximum": 100,
+                        "minimum": 1
+                    },
+                    "color": {
+                        "type": "string",
+                        "example": "White"
+                    },
+                    "model": {
+                        "description": "The vehicle model name.",
+                        "type": "string",
+                        "example": "Peugeot 206"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateVehicleInput": {
+                "description": "All fields are optional; only the provided fields are updated.",
+                "properties": {
+                    "number": {
+                        "description": "License plate of the vehicle.",
+                        "type": "string",
+                        "example": "12 ج 345 67"
+                    },
+                    "name": {
+                        "description": "A preferred name chosen by the user.",
+                        "type": "string",
+                        "example": "Daily driver"
+                    },
+                    "seats": {
+                        "type": "integer",
+                        "example": 4,
+                        "maximum": 100,
+                        "minimum": 1
+                    },
+                    "color": {
+                        "type": "string",
+                        "example": "White"
+                    },
+                    "model": {
+                        "description": "The vehicle model name.",
+                        "type": "string",
+                        "example": "Peugeot 206"
                     }
                 },
                 "type": "object"
@@ -756,6 +1168,46 @@
                 },
                 "type": "object"
             },
+            "Vehicle": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "number": {
+                        "description": "License plate of the vehicle.",
+                        "type": "string",
+                        "example": "12 ج 345 67"
+                    },
+                    "name": {
+                        "description": "A preferred name chosen by the user.",
+                        "type": "string",
+                        "example": "Daily driver"
+                    },
+                    "seats": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "color": {
+                        "type": "string",
+                        "example": "White"
+                    },
+                    "model": {
+                        "description": "The vehicle model name.",
+                        "type": "string",
+                        "example": "Peugeot 206"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "ApiSuccess": {
                 "title": "Success envelope",
                 "properties": {
@@ -846,6 +1298,41 @@
                     }
                 },
                 "type": "object"
+            },
+            "VehicleResponse": {
+                "title": "Vehicle envelope",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Vehicle"
+                    }
+                },
+                "type": "object"
+            },
+            "VehicleCollectionResponse": {
+                "title": "Vehicle collection envelope",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Vehicle"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -873,6 +1360,10 @@
         {
             "name": "Newsletter",
             "description": "Newsletter"
+        },
+        {
+            "name": "Vehicles",
+            "description": "Vehicles"
         }
     ]
 }
