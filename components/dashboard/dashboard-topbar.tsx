@@ -19,7 +19,12 @@ export default function DashboardTopbar() {
   const { user, signOut } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
-  const displayName = user?.name?.trim() || user?.phone_number || "کاربر";
+  const fullName = [user?.first_name, user?.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const displayName =
+    fullName || user?.name?.trim() || user?.phone_number || "کاربر";
 
   async function handleSignOut() {
     if (loggingOut) return;

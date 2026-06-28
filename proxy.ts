@@ -9,8 +9,11 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE)?.value;
   const { pathname } = request.nextUrl;
 
-  // Unauthenticated → keep out of the dashboard, remember where they wanted to go.
-  if (pathname.startsWith("/dashboard") && !token) {
+  // Unauthenticated → keep out of the protected areas, remember the destination.
+  if (
+    (pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) &&
+    !token
+  ) {
     const url = new URL("/login", request.url);
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
@@ -25,5 +28,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/onboarding/:path*", "/login"],
 };

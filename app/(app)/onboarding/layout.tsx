@@ -6,9 +6,8 @@ import { Loader2 } from "lucide-react";
 
 import { needsIdentityOnboarding } from "@/lib/identity";
 import { useAuth } from "@/components/auth/auth-provider";
-import DashboardTopbar from "@/components/dashboard/dashboard-topbar";
 
-export default function DashboardLayout({
+export default function OnboardingLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -17,16 +16,15 @@ export default function DashboardLayout({
   const { status, user } = useAuth();
 
   useEffect(() => {
-    // Secure check failed (no/invalid token) → bounce to login.
     if (status === "unauthenticated") {
       router.replace("/login");
-    } else if (status === "authenticated" && user && needsIdentityOnboarding(user)) {
-      // Hasn't completed identity onboarding yet → send them to finish it.
-      router.replace("/onboarding");
+    } else if (status === "authenticated" && user && !needsIdentityOnboarding(user)) {
+      // Already submitted (verifying/verified/rejected) — nothing to do here.
+      router.replace("/dashboard");
     }
   }, [status, user, router]);
 
-  if (status !== "authenticated" || (user && needsIdentityOnboarding(user))) {
+  if (status !== "authenticated" || (user && !needsIdentityOnboarding(user))) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
         <Loader2 className="size-7 animate-spin text-brand-600" />
@@ -34,12 +32,5 @@ export default function DashboardLayout({
     );
   }
 
-  return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
-      <DashboardTopbar />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8 sm:px-8">
-        {children}
-      </main>
-    </div>
-  );
+  return <>{children}</>;
 }

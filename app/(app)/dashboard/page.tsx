@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Car, MapPin, Sparkles, Users } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
+import IdentityStatusBanner from "@/components/dashboard/identity-status-banner";
 
 export const metadata: Metadata = {
   title: "داشبورد | همراه",
@@ -34,6 +35,8 @@ const placeholders = [
 export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
+      <IdentityStatusBanner />
+
       <section className="rounded-3xl border border-brand-100 bg-gradient-to-bl from-brand-50 to-card p-7 sm:p-9">
         <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-card/70 px-3 py-1 text-xs font-medium text-brand-700">
           <span className="size-1.5 rounded-full bg-brand-500" />

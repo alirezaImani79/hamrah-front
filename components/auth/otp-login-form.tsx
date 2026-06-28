@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Loader2, MessageSquareLock, Send } from "lucide-react";
 
 import { requestOtp, verifyOtp } from "@/lib/auth";
+import { needsIdentityOnboarding } from "@/lib/identity";
 import { errorMessage } from "@/lib/errors";
 import { toLatinDigits, toPersianDigits } from "@/lib/format";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -68,7 +69,13 @@ export default function OtpLoginForm() {
     try {
       const auth = await verifyOtp(phone, value);
       signIn(auth.token, auth.user);
-      router.replace(nextPath);
+      // New users — and anyone who never finished identity onboarding — go
+      // complete it before reaching their requested destination.
+      const target =
+        auth.is_new_user || needsIdentityOnboarding(auth.user)
+          ? "/onboarding"
+          : nextPath;
+      router.replace(target);
     } catch (err) {
       setError(errorMessage(err, "code"));
     } finally {
