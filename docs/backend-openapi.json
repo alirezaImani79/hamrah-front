@@ -284,6 +284,102 @@
                 ]
             }
         },
+        "/api/v1/locations/provinces": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "List Iranian provinces",
+                "description": "Public reference list of all active provinces, ordered by name. Use the returned id when submitting an address.",
+                "operationId": "listProvinces",
+                "responses": {
+                    "200": {
+                        "description": "Provinces retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiSuccess"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Province"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/locations/provinces/{province}/cities": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "List the cities of a province",
+                "description": "Public reference list of the active cities within a province, ordered by name.",
+                "operationId": "listProvinceCities",
+                "parameters": [
+                    {
+                        "name": "province",
+                        "in": "path",
+                        "description": "Province id (from the provinces list).",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 8
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cities retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/ApiSuccess"
+                                        },
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/City"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Province not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/newsletter": {
             "get": {
                 "tags": [
@@ -434,6 +530,9 @@
                     "national_code",
                     "birth_date",
                     "gender",
+                    "province_id",
+                    "city_id",
+                    "address",
                     "national_card_image",
                     "face_image"
                 ],
@@ -463,6 +562,21 @@
                             "female"
                         ]
                     },
+                    "province_id": {
+                        "description": "Province id from GET /api/v1/locations/provinces.",
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "city_id": {
+                        "description": "City id from GET /api/v1/locations/provinces/{province}/cities; must belong to province_id.",
+                        "type": "integer",
+                        "example": 760
+                    },
+                    "address": {
+                        "description": "Free-text address details (street, alley, no., postal code).",
+                        "type": "string",
+                        "example": "خیابان ولیعصر، کوچه ۵، پلاک ۱۲"
+                    },
                     "national_card_image": {
                         "description": "Photo of the national ID card.",
                         "type": "string",
@@ -472,6 +586,42 @@
                         "description": "Selfie of the user.",
                         "type": "string",
                         "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "City": {
+                "title": "City",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 760
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "تهران"
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 8
+                    }
+                },
+                "type": "object"
+            },
+            "Province": {
+                "title": "Province",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "تهران"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "23"
                     }
                 },
                 "type": "object"
@@ -539,6 +689,37 @@
                             "male",
                             "female"
                         ]
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 8,
+                        "nullable": true
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 760,
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "خیابان ولیعصر، کوچه ۵، پلاک ۱۲",
+                        "nullable": true
+                    },
+                    "province": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Province"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "city": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/City"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "identity_status": {
                         "type": "string",
@@ -684,6 +865,10 @@
         {
             "name": "Identity",
             "description": "Identity"
+        },
+        {
+            "name": "Locations",
+            "description": "Locations"
         },
         {
             "name": "Newsletter",
