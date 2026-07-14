@@ -75,6 +75,30 @@ export type Vehicle = {
   updated_at: string;
 };
 
+/** A geographic point as returned by the backend. */
+export type LatLng = {
+  lat: number;
+  lng: number;
+};
+
+/** Whether the authenticated user drives this trip or has joined it. */
+export type TripRole = "driver" | "passenger";
+
+export type Trip = {
+  id: number;
+  vehicle_id: number;
+  origin: LatLng;
+  destination: LatLng;
+  /** ISO-ish datetime, e.g. "2026-07-01 08:30:00". */
+  departure_at: string;
+  empty_seats: number;
+  trunk_empty: boolean;
+  role: TripRole;
+  passengers_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type AuthData = {
   token: string;
   token_type: string;
