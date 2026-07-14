@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Car, LayoutDashboard, Loader2, LogOut, Sprout } from "lucide-react";
+import { Car, LayoutDashboard, Loader2, LogOut, Route, Sprout } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ import {
 const NAV_LINKS = [
   { href: "/dashboard", label: "داشبورد", icon: LayoutDashboard },
   { href: "/dashboard/vehicles", label: "خودروهای من", icon: Car },
+  { href: "/dashboard/trips", label: "سفرهای من", icon: Route },
 ];
 
 export default function DashboardTopbar() {
