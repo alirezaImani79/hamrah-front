@@ -165,6 +165,15 @@
   }
 }
 
+/* The Neshan Leaflet SDK ships `.leaflet-div-icon { background:#fff; border:1px solid #666 }`,
+   which Leaflet applies to every div-icon wrapper alongside our `neshan-pin` class.
+   Our pins draw their own shape via inline SVG, so strip the default white box.
+   Two-class selector beats the SDK's single class regardless of cascade order. */
+.leaflet-div-icon.neshan-pin {
+  background: transparent;
+  border: 0;
+}
+
 /* Soft floating color glows behind the hero. */
 @keyframes float-slow {
   0%,
