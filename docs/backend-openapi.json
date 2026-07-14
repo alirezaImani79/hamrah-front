@@ -491,6 +491,533 @@
                 ]
             }
         },
+        "/api/v1/trips": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "List the authenticated user's trips",
+                "description": "List the trips the authenticated user drives.",
+                "operationId": "listTrips",
+                "responses": {
+                    "200": {
+                        "description": "List of trips",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Create a trip",
+                "description": "Create a new trip for the authenticated user.",
+                "operationId": "createTrip",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreTripInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Trip created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/current": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "List the authenticated user's upcoming trips",
+                "description": "List the authenticated user's upcoming trips, as driver or passenger.",
+                "operationId": "listCurrentTrips",
+                "responses": {
+                    "200": {
+                        "description": "List of upcoming trips",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/history": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "List the authenticated user's past trips",
+                "description": "List the authenticated user's past trips, as driver or passenger.",
+                "operationId": "listTripHistory",
+                "responses": {
+                    "200": {
+                        "description": "List of past trips",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Show a trip",
+                "description": "Show a trip the user drives or has joined.",
+                "operationId": "showTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Update a trip",
+                "description": "Update a trip the user drives, then notify its passengers.",
+                "operationId": "updateTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTripInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Trip updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden or trip already departed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Delete a trip",
+                "description": "Delete a trip the user drives.",
+                "operationId": "deleteTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}/join": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Join a trip as a passenger",
+                "description": "Join a trip as a passenger.",
+                "operationId": "joinTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Joined the trip",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Cannot join (own trip or already departed)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Trip full or already joined",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}/leave": {
+            "delete": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Leave a trip",
+                "description": "Leave a trip you previously joined.",
+                "operationId": "leaveTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Left the trip",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You are not a passenger on this trip",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/vehicles": {
             "get": {
                 "tags": [
@@ -934,6 +1461,62 @@
                 },
                 "type": "object"
             },
+            "UpdateTripInput": {
+                "description": "All fields are optional; only the provided fields are updated.",
+                "properties": {
+                    "vehicle_id": {
+                        "description": "A vehicle belonging to the authenticated user.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "origin_lat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 35.6892,
+                        "maximum": 90,
+                        "minimum": -90
+                    },
+                    "origin_lng": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 51.389,
+                        "maximum": 180,
+                        "minimum": -180
+                    },
+                    "destination_lat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 32.6539,
+                        "maximum": 90,
+                        "minimum": -90
+                    },
+                    "destination_lng": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 51.666,
+                        "maximum": 180,
+                        "minimum": -180
+                    },
+                    "departure_at": {
+                        "description": "When the trip departs; must be in the future.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-07-01 08:30:00"
+                    },
+                    "empty_seats": {
+                        "type": "integer",
+                        "example": 3,
+                        "maximum": 100,
+                        "minimum": 1
+                    },
+                    "trunk_empty": {
+                        "description": "Whether the vehicle trunk is empty for luggage.",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreVehicleInput": {
                 "required": [
                     "number",
@@ -1034,6 +1617,81 @@
                     "code": {
                         "type": "string",
                         "example": "23"
+                    }
+                },
+                "type": "object"
+            },
+            "Trip": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "vehicle_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "origin": {
+                        "properties": {
+                            "lat": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 35.6892
+                            },
+                            "lng": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 51.389
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "destination": {
+                        "properties": {
+                            "lat": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 32.6539
+                            },
+                            "lng": {
+                                "type": "number",
+                                "format": "float",
+                                "example": 51.666
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "departure_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "empty_seats": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "trunk_empty": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "driver",
+                        "enum": [
+                            "driver",
+                            "passenger"
+                        ]
+                    },
+                    "passengers_count": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -1333,6 +1991,41 @@
                     }
                 },
                 "type": "object"
+            },
+            "TripResponse": {
+                "title": "Trip envelope",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/Trip"
+                    }
+                },
+                "type": "object"
+            },
+            "TripCollectionResponse": {
+                "title": "Trip collection envelope",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Trip"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -1360,6 +2053,10 @@
         {
             "name": "Newsletter",
             "description": "Newsletter"
+        },
+        {
+            "name": "Trips",
+            "description": "Trips"
         },
         {
             "name": "Vehicles",
