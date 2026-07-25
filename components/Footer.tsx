@@ -7,7 +7,6 @@ const links = [
   { href: "#ai", label: "هوش مصنوعی" },
   { href: "#impact", label: "اثر اجتماعی" },
   { href: "#faq", label: "سؤالای پرتکرار" },
-  { href: "#waitlist", label: "عضویت" },
 ];
 
 export default function Footer() {

@@ -72,24 +72,7 @@ export default function Hero() {
           خیابون یه نفسی می‌کشه.
         </p>
 
-        {/* Countdown */}
-        <div className="mt-2 flex w-full flex-col items-center gap-4 rounded-3xl border border-brand-100 bg-card/50 p-6 backdrop-blur-sm sm:p-8">
-          <p className="text-sm font-medium text-muted-foreground">
-            تا شروع همراه این‌قدر مونده:
-          </p>
-          <CountdownTimer />
-        </div>
-
         <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <a
-            href="#waitlist"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "h-12 rounded-full px-7 text-base font-semibold shadow-lg shadow-brand-600/25"
-            )}
-          >
-            جزو اولین‌ها باش
-          </a>
           <a
             href="#how"
             className={cn(
