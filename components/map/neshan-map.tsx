@@ -162,7 +162,10 @@ export function NeshanMap({
   }, [markers, fitToMarkers, status, zoom]);
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    // `isolate` creates a stacking context so Leaflet's high-z panes
+    // (tilePane 200, markerPane 600, popupPane 700) stay scoped here and don't
+    // paint over dialogs/modals (z-50) that share the root stacking context.
+    <div className={cn("relative isolate overflow-hidden", className)}>
       <div
         ref={containerRef}
         role="application"
