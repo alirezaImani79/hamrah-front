@@ -1,0 +1,26 @@
+name: hamrah-frontend
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://api.hamrah-ride.ir
+        NEXT_PUBLIC_NESHAN_API_KEY: web.74e49d6ae44648f6949a20d0bd394041
+    image: hamrah-frontend:latest
+    container_name: hamrah-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3010"
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_API_BASE_URL: https://api.hamrah-ride.ir
+      NEXT_PUBLIC_NESHAN_API_KEY: web.74e49d6ae44648f6949a20d0bd394041
+    networks:
+      - caddy
+
+networks:
+  caddy:
+    external: true
+    name: caddy
