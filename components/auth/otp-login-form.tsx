@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Loader2, MessageSquareLock, Send } from "lucide-react";
 
-import { requestOtp, verifyOtp } from "@/lib/auth";
+import { getMe, requestOtp, verifyOtp } from "@/lib/auth";
 import { needsIdentityOnboarding } from "@/lib/identity";
 import { errorMessage } from "@/lib/errors";
 import { toLatinDigits, toPersianDigits } from "@/lib/format";
@@ -68,11 +68,23 @@ export default function OtpLoginForm() {
     setLoading(true);
     try {
       const auth = await verifyOtp(phone, value);
-      signIn(auth.token, auth.user);
+      // The verify response can carry a stale user record — for a brand-new
+      // account, identity_status may not yet reflect its DB default ("pending"),
+      // which makes the onboarding decision and guards misfire (user gets sent
+      // to /dashboard until a refresh re-fetches the real status). Re-fetch via
+      // getMe so both the auth context and our routing use the authoritative
+      // profile. Fall back to the verify user only if that call fails.
+      let user = auth.user;
+      try {
+        user = await getMe(auth.token);
+      } catch {
+        // keep verify's user
+      }
+      signIn(auth.token, user);
       // New users — and anyone who never finished identity onboarding — go
       // complete it before reaching their requested destination.
       const target =
-        auth.is_new_user || needsIdentityOnboarding(auth.user)
+        auth.is_new_user || needsIdentityOnboarding(user)
           ? "/onboarding"
           : nextPath;
       router.replace(target);
