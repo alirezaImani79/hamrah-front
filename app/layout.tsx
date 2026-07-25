@@ -33,6 +33,9 @@ export const metadata: Metadata = {
     locale: "fa_IR",
     type: "website",
   },
+  other:{
+    "enamad": "31169637"
+  }
 };
 
 export const viewport: Viewport = {
