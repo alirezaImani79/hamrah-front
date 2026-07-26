@@ -734,11 +734,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Trip details",
+                        "description": "Trip details with driver, vehicle, and passengers",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/TripResponse"
+                                    "$ref": "#/components/schemas/TripDetailResponse"
                                 }
                             }
                         }
@@ -1777,6 +1777,82 @@
                 },
                 "type": "object"
             },
+            "TripDetail": {
+                "title": "Trip detail",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Trip"
+                    },
+                    {
+                        "properties": {
+                            "driver": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/TripParticipant"
+                                    }
+                                ],
+                                "nullable": true,
+                                "description": "A trip enriched with its driver, vehicle, and signed-up passengers.\n\nUsed by the trip detail page shown to the driver and passengers."
+                            },
+                            "vehicle": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/Vehicle"
+                                    }
+                                ],
+                                "nullable": true
+                            },
+                            "passengers": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/TripParticipant"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "TripParticipant": {
+                "title": "Trip participant",
+                "description": "A user as seen by others on a shared trip (driver or passenger).",
+                "properties": {
+                    "id": {
+                        "description": "A user as seen by others on a shared trip (driver or passenger).\n\nExposes only what fellow riders need to identify and contact each other —\nnever the sensitive own-profile fields (national code, address, identity docs).",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "Ali",
+                        "nullable": true
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Imani",
+                        "nullable": true
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "male",
+                        "nullable": true,
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    },
+                    "phone_number": {
+                        "type": "string",
+                        "example": "+15551234567"
+                    },
+                    "is_identity_verified": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
             "Trip": {
                 "properties": {
                     "id": {
@@ -1968,7 +2044,7 @@
                     },
                     "identity_rejection_reason": {
                         "type": "string",
-                        "example": "The selfie does not match the card photo.",
+                        "example": "کد ملی واردشده با کارت ملی مطابقت ندارد.",
                         "nullable": true
                     },
                     "created_at": {
@@ -2160,6 +2236,22 @@
                     },
                     "data": {
                         "$ref": "#/components/schemas/Trip"
+                    }
+                },
+                "type": "object"
+            },
+            "TripDetailResponse": {
+                "title": "Trip detail envelope",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/TripDetail"
                     }
                 },
                 "type": "object"

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Car, MapPin, Sparkles, Users } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Car, MapPin, Sparkles, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import IdentityStatusBanner from "@/components/dashboard/identity-status-banner";
 
@@ -9,7 +12,15 @@ export const metadata: Metadata = {
   description: "داشبورد کاربری همراه.",
 };
 
-const placeholders = [
+type Placeholder = {
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  /** When set, the card links to this href and shows as live instead of "به‌زودی". */
+  href?: string;
+};
+
+const placeholders: Placeholder[] = [
   {
     icon: Car,
     title: "سفرهای من",
@@ -28,7 +39,8 @@ const placeholders = [
   {
     icon: Sparkles,
     title: "پیشنهاد هوشمند",
-    desc: "هوش مصنوعی همراه بهترین هم‌سفر رو بهت پیشنهاد می‌ده.",
+    desc: "ترجیحاتت رو مشخص کن تا سفرهای هم‌مسیر رو بهت پیشنهاد بدیم.",
+    href: "/dashboard/find-trip",
   },
 ];
 
@@ -52,22 +64,45 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        {placeholders.map(({ icon: Icon, title, desc }) => (
-          <Card key={title} className="gap-3 p-6">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
-                <Icon className="size-5" />
-              </span>
-              <h2 className="font-heading text-base font-semibold text-foreground">
-                {title}
-              </h2>
-              <span className="ms-auto rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                به‌زودی
-              </span>
-            </div>
-            <p className="text-sm leading-7 text-muted-foreground">{desc}</p>
-          </Card>
-        ))}
+        {placeholders.map(({ icon: Icon, title, desc, href }) => {
+          const card = (
+            <Card
+              className={cn(
+                "gap-3 p-6 transition-colors",
+                href &&
+                  "group hover:border-brand-200 hover:bg-brand-50/40",
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                  <Icon className="size-5" />
+                </span>
+                <h2 className="font-heading text-base font-semibold text-foreground">
+                  {title}
+                </h2>
+                {href ? (
+                  <span className="ms-auto inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
+                    فعال
+                    <ArrowLeft className="size-3 transition-transform group-hover:-translate-x-0.5" />
+                  </span>
+                ) : (
+                  <span className="ms-auto rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                    به‌زودی
+                  </span>
+                )}
+              </div>
+              <p className="text-sm leading-7 text-muted-foreground">{desc}</p>
+            </Card>
+          );
+
+          return href ? (
+            <Link key={title} href={href}>
+              {card}
+            </Link>
+          ) : (
+            <div key={title}>{card}</div>
+          );
+        })}
       </section>
     </div>
   );
