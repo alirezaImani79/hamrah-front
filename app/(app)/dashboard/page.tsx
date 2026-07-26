@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Car, MapPin, Sparkles, Users } from "lucide-react";
+import { ArrowLeft, MapPin, Plus, Sparkles, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import IdentityStatusBanner from "@/components/dashboard/identity-status-banner";
+import { DashboardTrips } from "@/components/dashboard/trips/dashboard-trips";
 
 export const metadata: Metadata = {
   title: "داشبورد | همراه",
   description: "داشبورد کاربری همراه.",
 };
 
-type Placeholder = {
+type QuickAction = {
   icon: LucideIcon;
   title: string;
   desc: string;
@@ -20,11 +21,18 @@ type Placeholder = {
   href?: string;
 };
 
-const placeholders: Placeholder[] = [
+const quickActions: QuickAction[] = [
   {
-    icon: Car,
-    title: "سفرهای من",
-    desc: "سفرهای فعال و گذشته‌ات این‌جا نمایش داده می‌شن.",
+    icon: Plus,
+    title: "ثبت سفر",
+    desc: "سفر جدیدت رو ثبت کن تا هم‌سفرها بتونن بهت ملحق بشن.",
+    href: "/dashboard/trips",
+  },
+  {
+    icon: Sparkles,
+    title: "پیشنهاد هوشمند",
+    desc: "ترجیحاتت رو مشخص کن تا سفرهای هم‌مسیر رو بهت پیشنهاد بدیم.",
+    href: "/dashboard/find-trip",
   },
   {
     icon: MapPin,
@@ -35,12 +43,6 @@ const placeholders: Placeholder[] = [
     icon: Users,
     title: "هم‌سفرها",
     desc: "آدم‌های هم‌مسیرت رو ببین و باهاشون هماهنگ شو.",
-  },
-  {
-    icon: Sparkles,
-    title: "پیشنهاد هوشمند",
-    desc: "ترجیحاتت رو مشخص کن تا سفرهای هم‌مسیر رو بهت پیشنهاد بدیم.",
-    href: "/dashboard/find-trip",
   },
 ];
 
@@ -58,19 +60,25 @@ export default function DashboardPage() {
           به داشبورد همراه خوش اومدی 👋
         </h1>
         <p className="mt-2 max-w-xl text-pretty leading-8 text-muted-foreground">
-          این‌جا داشبورد توئه. هنوز در حال ساختنشیم؛ به‌زودی همه‌چیزی که برای
-          شروع هم‌سفری لازم داری این‌جا در دسترست خواهد بود.
+          سفرهای در حال انجام و پیش‌روت رو این‌جا ببین و مدیریت کن. می‌تونی سفر
+          جدید ثبت کنی، هم‌سفر پیدا کنی یا—in صورت نیاز—سفرت رو لغو کنی.
         </p>
       </section>
 
+      <section className="flex flex-col gap-4">
+        <h2 className="font-heading text-lg font-semibold text-foreground">
+          سفرهای من
+        </h2>
+        <DashboardTrips />
+      </section>
+
       <section className="grid gap-4 sm:grid-cols-2">
-        {placeholders.map(({ icon: Icon, title, desc, href }) => {
+        {quickActions.map(({ icon: Icon, title, desc, href }) => {
           const card = (
             <Card
               className={cn(
                 "gap-3 p-6 transition-colors",
-                href &&
-                  "group hover:border-brand-200 hover:bg-brand-50/40",
+                href && "group hover:border-brand-200 hover:bg-brand-50/40",
               )}
             >
               <div className="flex items-center gap-3">
