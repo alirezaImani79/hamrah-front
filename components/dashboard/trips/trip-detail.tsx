@@ -15,6 +15,7 @@ import {
   Phone,
   User,
   Users,
+  XCircle,
 } from "lucide-react";
 
 import { getToken } from "@/lib/auth";
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { toPersianDigits } from "@/lib/format";
 import { formatJalaliDateTime, isFuture } from "@/lib/datetime";
 import {
+  cancelTrip,
   getTripDetail,
   leaveTrip,
   type TripDetail,
@@ -109,6 +111,10 @@ export function TripDetailManager({ tripId }: { tripId: string }) {
   const [leaving, setLeaving] = useState(false);
   const [leaveError, setLeaveError] = useState<string | null>(null);
 
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
   const load = useCallback(async () => {
     const token = getToken();
     if (!token) {
@@ -147,6 +153,25 @@ export function TripDetailManager({ tripId }: { tripId: string }) {
       setLeaveError(errorMessage(err));
     } finally {
       setLeaving(false);
+    }
+  }
+
+  async function handleCancel() {
+    if (cancelling) return;
+    const token = getToken();
+    if (!token) {
+      setCancelError("نشستت منقضی شده؛ برای ادامه دوباره وارد شو.");
+      return;
+    }
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      await cancelTrip(token, Number(tripId));
+      router.push("/dashboard/trips");
+    } catch (err) {
+      setCancelError(errorMessage(err));
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -320,9 +345,22 @@ export function TripDetailManager({ tripId }: { tripId: string }) {
           </Button>
         </div>
       ) : (
-        <p className="border-t border-border pt-4 text-sm text-muted-foreground">
-          این سفر رو تو ایجاد کردی.
-        </p>
+        <div className="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            این سفر رو تو ایجاد کردی.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setCancelError(null);
+              setCancelOpen(true);
+            }}
+            className="gap-1.5 self-start rounded-xl text-muted-foreground hover:text-destructive sm:self-auto"
+          >
+            <XCircle className="size-4" />
+            لغو سفر
+          </Button>
+        </div>
       )}
 
       <AlertDialog
@@ -365,6 +403,51 @@ export function TripDetailManager({ tripId }: { tripId: string }) {
                 <DoorOpen className="size-4" />
               )}
               {leaving ? "در حال خروج…" : "خروج از سفر"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={cancelOpen}
+        onOpenChange={(open) => {
+          if (!cancelling) setCancelOpen(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>لغو سفر</AlertDialogTitle>
+            <AlertDialogDescription>
+              مطمئنی می‌خوای این سفر رو لغو کنی؟ هم‌سفرها مطلع می‌شن و این کار
+              قابل بازگشت نیست.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {cancelError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {cancelError}
+            </p>
+          ) : null}
+          <AlertDialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCancelOpen(false)}
+              disabled={cancelling}
+              className="rounded-xl"
+            >
+              انصراف
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancel}
+              disabled={cancelling}
+              className="gap-1.5 rounded-xl"
+            >
+              {cancelling ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <XCircle className="size-4" />
+              )}
+              {cancelling ? "در حال لغو…" : "لغو سفر"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
