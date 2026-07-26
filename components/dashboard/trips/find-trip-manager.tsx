@@ -6,7 +6,7 @@ import { Loader2, RotateCw, Search, Square } from "lucide-react";
 
 import { ApiError, type Trip } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { errorMessage } from "@/lib/errors";
+import { errorMessage, fieldErrors } from "@/lib/errors";
 import { toPersianDigits } from "@/lib/format";
 import { isFuture, toBackendDateTime } from "@/lib/datetime";
 import {
@@ -69,19 +69,15 @@ function validate(form: FormState): FieldErrors {
   return errors;
 }
 
-/** Maps backend 422 field keys onto the form's grouped error keys. */
+/** Maps backend 422 field keys onto the form's grouped error keys (Persian). */
 function mapApiErrors(err: ApiError): FieldErrors {
+  const api = fieldErrors(err);
   const mapped: FieldErrors = {};
   const route =
-    err.fieldError("origin_lat") ??
-    err.fieldError("origin_lng") ??
-    err.fieldError("destination_lat") ??
-    err.fieldError("destination_lng");
+    api.origin_lat ?? api.origin_lng ?? api.destination_lat ?? api.destination_lng;
   if (route) mapped.route = route;
-  const departure = err.fieldError("departure_at");
-  if (departure) mapped.departure = departure;
-  const seats = err.fieldError("requested_seats");
-  if (seats) mapped.seats = seats;
+  if (api.departure_at) mapped.departure = api.departure_at;
+  if (api.requested_seats) mapped.seats = api.requested_seats;
   return mapped;
 }
 

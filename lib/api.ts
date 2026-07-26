@@ -110,27 +110,32 @@ export type AuthData = {
 export type ApiEnvelope<T> = {
   success: boolean;
   message: string;
+  /** Stable machine-readable error code (e.g. `OTP_INVALID`). Use this — not `message` — to localize. */
+  code?: string | null;
   data?: T | null;
   errors?: Record<string, string[]> | null;
 };
 
-/** Error carrying the backend `message`, HTTP `status`, and field `errors`. */
+/** Error carrying the backend `code`, HTTP `status`, and field `errors`. */
 export class ApiError extends Error {
   readonly status: number;
+  readonly code: string | null;
   readonly errors: Record<string, string[]> | null;
 
   constructor(
     message: string,
     status: number,
     errors: Record<string, string[]> | null = null,
+    code: string | null = null,
   ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.errors = errors;
+    this.code = code;
   }
 
-  /** First validation message for a given field, if any. */
+  /** First validation message for a given field, if any. (English; for debug only — UI must go through `lib/errors.ts`.) */
   fieldError(field: string): string | undefined {
     return this.errors?.[field]?.[0];
   }
@@ -186,9 +191,12 @@ export async function apiFetch<T>(
 
   if (!response.ok || !envelope?.success) {
     throw new ApiError(
+      // `message` is an English developer fallback; the UI never renders it —
+      // lib/errors.ts localizes off `code` / status instead.
       envelope?.message ?? "خطایی رخ داد؛ کمی بعد دوباره تلاش کن.",
       response.status,
       envelope?.errors ?? null,
+      envelope?.code ?? null,
     );
   }
 

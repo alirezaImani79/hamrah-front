@@ -70,11 +70,12 @@ export function MatchedTripCard({ trip, onJoined }: Props) {
       // Send the user to the trip detail page (driver, passengers, status).
       router.push(`/dashboard/trips/${updated.id}`);
     } catch (err) {
-      if (err instanceof ApiError && err.status === 422) {
-        setError("این سفر ظرفیت نداره یا قبلاً هم‌سفرش شدی.");
-      } else if (err instanceof ApiError && err.status === 403) {
-        setError("به این سفر نمی‌تونی اضافه بشی.");
+      if (err instanceof ApiError && err.code === "TRIP_FULL") {
+        setError("ظرفیت این سفر پر شده.");
+      } else if (err instanceof ApiError && err.code === "TRIP_ALREADY_JOINED") {
+        setError("تو قبلاً هم‌سفر این سفر شدی.");
       } else {
+        // Covers UNAUTHORIZED (403) and everything else via the code/status map.
         setError(errorMessage(err));
       }
     } finally {

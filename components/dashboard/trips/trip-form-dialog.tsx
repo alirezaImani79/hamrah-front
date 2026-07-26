@@ -6,7 +6,7 @@ import { type DateObject } from "react-multi-date-picker";
 
 import { ApiError, type Trip, type Vehicle } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { errorMessage } from "@/lib/errors";
+import { errorMessage, fieldErrors } from "@/lib/errors";
 import { toLatinDigits, toPersianDigits } from "@/lib/format";
 import { toBackendDateTime, fromBackendDateTime, isFuture } from "@/lib/datetime";
 import { createTrip, updateTrip, type TripInput } from "@/lib/trips";
@@ -75,21 +75,16 @@ function validate(form: FormState): FieldErrors {
   return errors;
 }
 
-/** Maps backend 422 field keys onto the form's grouped error keys. */
+/** Maps backend 422 field keys onto the form's grouped error keys (Persian). */
 function mapApiErrors(err: ApiError): FieldErrors {
+  const api = fieldErrors(err);
   const mapped: FieldErrors = {};
-  const vehicle = err.fieldError("vehicle_id");
-  if (vehicle) mapped.vehicleId = vehicle;
+  if (api.vehicle_id) mapped.vehicleId = api.vehicle_id;
   const route =
-    err.fieldError("origin_lat") ??
-    err.fieldError("origin_lng") ??
-    err.fieldError("destination_lat") ??
-    err.fieldError("destination_lng");
+    api.origin_lat ?? api.origin_lng ?? api.destination_lat ?? api.destination_lng;
   if (route) mapped.route = route;
-  const departure = err.fieldError("departure_at");
-  if (departure) mapped.departure = departure;
-  const seats = err.fieldError("empty_seats");
-  if (seats) mapped.emptySeats = seats;
+  if (api.departure_at) mapped.departure = api.departure_at;
+  if (api.empty_seats) mapped.emptySeats = api.empty_seats;
   return mapped;
 }
 

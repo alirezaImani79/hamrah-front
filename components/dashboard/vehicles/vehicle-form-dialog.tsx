@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 
 import { ApiError, type Vehicle } from "@/lib/api";
 import { getToken } from "@/lib/auth";
-import { errorMessage } from "@/lib/errors";
+import { errorMessage, fieldErrors } from "@/lib/errors";
 import { toLatinDigits, toPersianDigits } from "@/lib/format";
 import {
   createVehicle,
@@ -147,10 +147,10 @@ export function VehicleFormDialog({
       onOpenChange(false);
     } catch (err) {
       if (err instanceof ApiError && err.status === 422 && err.errors) {
+        const api = fieldErrors(err);
         const mapped: FieldErrors = {};
-        for (const key of Object.keys(form) as (keyof FormState)[]) {
-          const message = err.fieldError(key);
-          if (message) mapped[key] = message;
+        for (const key of Object.keys(api) as (keyof FormState)[]) {
+          mapped[key] = api[key];
         }
         setErrors(mapped);
         if (Object.keys(mapped).length === 0) setSubmitError(errorMessage(err));

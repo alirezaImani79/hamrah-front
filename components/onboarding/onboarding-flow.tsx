@@ -164,12 +164,19 @@ export default function OnboardingFlow() {
       setSubmittedUser(updated);
     } catch (err) {
       if (err instanceof ApiError) {
-        // Already submitted on a previous attempt — just move along.
-        if (err.status === 409) {
+        // Already verified or still under review — just move along.
+        if (
+          err.code === "IDENTITY_VERIFICATION_IN_PROGRESS" ||
+          err.code === "IDENTITY_ALREADY_VERIFIED" ||
+          err.status === 409
+        ) {
           router.replace("/dashboard");
           return;
         }
-        if (err.status === 422 && err.errors) {
+        if (
+          (err.code === "VALIDATION_FAILED" || err.status === 422) &&
+          err.errors
+        ) {
           const mapped = mapApiErrors(err);
           setErrors(mapped);
           const target = firstStepWithError(mapped);

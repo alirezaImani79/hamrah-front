@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/api";
+import { fieldErrors } from "@/lib/errors";
 import { toLatinDigits } from "@/lib/format";
 import { jalaliMonthLength } from "@/lib/jalali";
 import { isValidNationalCode } from "@/lib/national-id";
@@ -62,14 +63,9 @@ const FIELD_STEP: Record<string, number> = {
   face_image: 2,
 };
 
-/** Map a backend 422 `ApiError` to our field-error map (first message per field). */
+/** Map a backend validation `ApiError` to our Persian field-error map. */
 export function mapApiErrors(error: ApiError): FieldErrors {
-  const result: FieldErrors = {};
-  if (!error.errors) return result;
-  for (const [field, messages] of Object.entries(error.errors)) {
-    if (messages?.[0]) result[field] = messages[0];
-  }
-  return result;
+  return fieldErrors(error);
 }
 
 /** The earliest step that has an error, so we can send the user back to fix it. */
