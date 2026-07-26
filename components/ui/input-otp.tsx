@@ -55,9 +55,15 @@ export function InputOTP({
   function handleChange(index: number, raw: string) {
     const digits = toLatinDigits(raw).replace(/\D/g, "");
     if (!digits) return;
-    const char = digits[digits.length - 1];
-    commit(value.slice(0, index) + char + value.slice(index + 1));
-    focusAt(index + 1);
+    // Distribute incoming digits starting at `index`. A single keystroke writes
+    // one digit; a browser OTP autofill (autocomplete="one-time-code") dumps the
+    // whole code into the first box in one go, so write every digit we received.
+    const next = value.split("");
+    for (let i = 0; i < digits.length && index + i < length; i++) {
+      next[index + i] = digits[i];
+    }
+    commit(next.join(""));
+    focusAt(Math.min(index + digits.length, length - 1));
   }
 
   function handleKeyDown(
@@ -119,7 +125,13 @@ export function InputOTP({
           inputMode="numeric"
           autoComplete={index === 0 ? "one-time-code" : "off"}
           autoFocus={autoFocus && index === 0}
-          maxLength={1}
+          // Allow the full code so the browser can drop an autofilled / Web-OTP
+          // code into the first box without `maxlength` truncating it to one
+          // digit. Display stays one-char-per-box via the controlled `value`.
+          maxLength={length}
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           disabled={disabled}
           aria-invalid={invalid}
           value={value[index] ? toPersianDigits(value[index]) : ""}

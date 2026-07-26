@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Loader2, MessageSquareLock, Send } from "lucide-react";
 
@@ -94,6 +94,52 @@ export default function OtpLoginForm() {
       setLoading(false);
     }
   }
+
+  // Keep a live reference so the Web OTP effect (which only re-runs when the
+  // step changes) always calls the latest verify closure. Synced in an effect
+  // per the react-hooks/refs rule (no ref writes during render).
+  const verifyRef = useRef(verify);
+  useEffect(() => {
+    verifyRef.current = verify;
+  });
+
+  // Web OTP API: on supporting browsers (notably Android Chrome over HTTPS) the
+  // browser can read the code straight out of the incoming SMS — no typing, no
+  // "enter the 6 digits" friction. We kick off retrieval the moment the code
+  // step opens and abort it when we leave the step. Everywhere the API is
+  // unavailable this is a no-op and the user falls back to typing or the
+  // autocomplete="one-time-code" keyboard suggestion.
+  useEffect(() => {
+    if (step !== "code") return;
+    if (typeof window === "undefined" || !("OTPCredential" in window)) return;
+    // OTPCredential types aren't in lib.dom yet; cast is intentional.
+    const getOtp = (
+      navigator.credentials as unknown as {
+        get?: (options: {
+          otp?: { transport: string[] };
+          signal?: AbortSignal;
+        }) => Promise<{ code?: string } | null>;
+      }
+    )?.get;
+    if (!getOtp) return;
+
+    const controller = new AbortController();
+    getOtp({ otp: { transport: ["sms"] }, signal: controller.signal })
+      .then((otp) => {
+        const fetched = otp?.code;
+        if (!fetched) return;
+        const digits = toLatinDigits(fetched)
+          .replace(/\D/g, "")
+          .slice(0, OTP_LENGTH);
+        if (digits.length !== OTP_LENGTH) return;
+        setCode(digits);
+        verifyRef.current(digits);
+      })
+      .catch(() => {
+        // Aborted (navigated away / user typed the code manually) or dismissed.
+      });
+    return () => controller.abort();
+  }, [step]);
 
   async function handleResend() {
     if (loading) return;
