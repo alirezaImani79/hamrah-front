@@ -7,6 +7,7 @@ const links = [
   { href: "#ai", label: "هوش مصنوعی" },
   { href: "#impact", label: "اثر اجتماعی" },
   { href: "#faq", label: "سؤالای پرتکرار" },
+  { href: "/download", label: "دانلود اپ" },
 ];
 
 // نماد اعتماد الکترونیک (eNamad) — the seal/URL pair are issued per-site;

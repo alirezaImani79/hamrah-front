@@ -1,4 +1,4 @@
-import { ArrowLeft, Sprout } from "lucide-react";
+import { ArrowLeft, Download, Sprout } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +73,16 @@ export default function Hero() {
         </p>
 
         <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <a
+            href="/download"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "h-12 gap-2 rounded-full px-7 text-base font-semibold shadow-md shadow-brand-500/20"
+            )}
+          >
+            <Download className="size-4" />
+            دانلود اپلیکیشن
+          </a>
           <a
             href="#how"
             className={cn(
