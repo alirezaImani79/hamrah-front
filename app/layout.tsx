@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import ServiceWorkerRegister from "@/components/pwa/sw-register";
 
 // Vazirmatn drives the whole UI font (Persian + Latin). Binding it to the
 // --font-sans CSS variable means shadcn's `font-sans` / `font-heading` tokens
@@ -15,6 +16,9 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
+  // Links the web manifest (app/manifest.ts, served at /manifest.webmanifest)
+  // so the site is installable and Bubblewrap can build a TWA from it.
+  manifest: "/manifest.webmanifest",
   title: "همراه | هم‌سفری هوشمند برای شهری پاک‌تر",
   description:
     "همراه با کمک هوش مصنوعی آدم‌های هم‌مسیر را به هم می‌رساند تا صندلی‌های خالی پر شوند، بنزین کمتری بسوزد و ترافیک سبک‌تر شود. کاملاً داوطلبانه و غیرانتفاعی.",
@@ -60,6 +64,7 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>{children}</AuthProvider>
         </Providers>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
