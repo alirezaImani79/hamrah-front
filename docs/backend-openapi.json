@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "Hamrah API",
-        "description": "REST API for the Hamrah application. Every response uses a uniform JSON envelope: `{ success, message, data }` on success and `{ success, message, errors }` on failure.",
+        "description": "REST API for the Hamrah application. Every response uses a uniform JSON envelope: `{ success, message, data }` on success and `{ success, message, code, errors }` on failure, where `code` is a stable machine-readable error code the client localizes against.",
         "version": "1.0.0"
     },
     "servers": [
@@ -42,7 +42,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`), or a code was requested within the cooldown window (`OTP_REQUEST_THROTTLED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -52,7 +52,7 @@
                         }
                     },
                     "429": {
-                        "description": "Too many requests",
+                        "description": "Too many requests (`TOO_MANY_REQUESTS`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -94,7 +94,7 @@
                         }
                     },
                     "422": {
-                        "description": "Invalid or expired code",
+                        "description": "Validation error (`VALIDATION_FAILED`), or the code is invalid/expired/used up (`OTP_INVALID`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -126,7 +126,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -163,7 +163,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -200,7 +200,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -247,7 +247,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -257,7 +257,7 @@
                         }
                     },
                     "409": {
-                        "description": "Verification already in progress or completed",
+                        "description": "Already verifying (`IDENTITY_VERIFICATION_IN_PROGRESS`) or already verified (`IDENTITY_ALREADY_VERIFIED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -267,7 +267,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -368,7 +368,7 @@
                         }
                     },
                     "404": {
-                        "description": "Province not found",
+                        "description": "Province not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -400,7 +400,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -437,7 +437,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -474,7 +474,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -511,7 +511,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -556,7 +556,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -566,7 +566,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -603,7 +603,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -640,7 +640,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -687,7 +687,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -697,7 +697,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -744,7 +744,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -754,7 +754,7 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Forbidden (`UNAUTHORIZED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -764,7 +764,7 @@
                         }
                     },
                     "404": {
-                        "description": "Trip not found",
+                        "description": "Trip not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -819,7 +819,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -829,7 +829,7 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden or trip already departed",
+                        "description": "Forbidden, e.g. not the driver or the trip already departed (`UNAUTHORIZED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -839,7 +839,7 @@
                         }
                     },
                     "404": {
-                        "description": "Trip not found",
+                        "description": "Trip not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -849,7 +849,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -894,7 +894,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -904,7 +904,7 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Forbidden (`UNAUTHORIZED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -914,7 +914,7 @@
                         }
                     },
                     "404": {
-                        "description": "Trip not found",
+                        "description": "Trip not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -961,7 +961,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -971,7 +971,7 @@
                         }
                     },
                     "403": {
-                        "description": "Cannot join (own trip or already departed)",
+                        "description": "Cannot join, e.g. own trip or already departed (`UNAUTHORIZED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -981,7 +981,7 @@
                         }
                     },
                     "404": {
-                        "description": "Trip not found",
+                        "description": "Trip not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -991,7 +991,7 @@
                         }
                     },
                     "422": {
-                        "description": "Trip full or already joined",
+                        "description": "Trip full (`TRIP_FULL`) or already joined (`TRIP_ALREADY_JOINED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1038,7 +1038,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1048,7 +1048,7 @@
                         }
                     },
                     "403": {
-                        "description": "You are not a passenger on this trip",
+                        "description": "You are not a passenger on this trip (`UNAUTHORIZED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1058,7 +1058,7 @@
                         }
                     },
                     "404": {
-                        "description": "Trip not found",
+                        "description": "Trip not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1095,7 +1095,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1140,7 +1140,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1150,7 +1150,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1197,7 +1197,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1207,7 +1207,7 @@
                         }
                     },
                     "404": {
-                        "description": "Vehicle not found",
+                        "description": "Vehicle not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1262,7 +1262,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1272,7 +1272,7 @@
                         }
                     },
                     "404": {
-                        "description": "Vehicle not found",
+                        "description": "Vehicle not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1282,7 +1282,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error",
+                        "description": "Validation error (`VALIDATION_FAILED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1327,7 +1327,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated",
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1337,7 +1337,7 @@
                         }
                     },
                     "404": {
-                        "description": "Vehicle not found",
+                        "description": "Vehicle not found (`NOT_FOUND`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2118,6 +2118,7 @@
             },
             "ApiError": {
                 "title": "Error envelope",
+                "description": "Every error response shares this shape. `code` is the stable, machine-readable identifier the client should use to resolve a localized message; `message` is an English developer/human fallback and may change. Codes returned per endpoint are listed in that endpoint's response descriptions. Legend: `VALIDATION_FAILED` (422, request body failed rules; per-field detail under `errors`), `UNAUTHENTICATED` (401), `UNAUTHORIZED` (403, policy denied), `NOT_FOUND` (404, modeled resource missing), `ENDPOINT_NOT_FOUND` (404, unknown route), `METHOD_NOT_ALLOWED` (405), `TOO_MANY_REQUESTS` (429, throttled), `SERVER_ERROR` (500), `OTP_INVALID` (422, code invalid/expired/used up), `OTP_REQUEST_THROTTLED` (422, code requested too soon), `IDENTITY_VERIFICATION_IN_PROGRESS` (409), `IDENTITY_ALREADY_VERIFIED` (409), `TRIP_FULL` (422), `TRIP_ALREADY_JOINED` (422).",
                 "properties": {
                     "success": {
                         "type": "boolean",
@@ -2126,6 +2127,27 @@
                     "message": {
                         "type": "string",
                         "example": "The given data was invalid."
+                    },
+                    "code": {
+                        "description": "Stable machine-readable error code. Use this — not `message` — to pick a localized string.",
+                        "type": "string",
+                        "example": "VALIDATION_FAILED",
+                        "enum": [
+                            "VALIDATION_FAILED",
+                            "UNAUTHENTICATED",
+                            "UNAUTHORIZED",
+                            "NOT_FOUND",
+                            "ENDPOINT_NOT_FOUND",
+                            "METHOD_NOT_ALLOWED",
+                            "TOO_MANY_REQUESTS",
+                            "SERVER_ERROR",
+                            "OTP_INVALID",
+                            "OTP_REQUEST_THROTTLED",
+                            "IDENTITY_VERIFICATION_IN_PROGRESS",
+                            "IDENTITY_ALREADY_VERIFIED",
+                            "TRIP_FULL",
+                            "TRIP_ALREADY_JOINED"
+                        ]
                     },
                     "errors": {
                         "type": "object",
