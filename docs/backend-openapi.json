@@ -583,17 +583,54 @@
                 ]
             }
         },
-        "/api/v1/trips/current": {
+        "/api/v1/trips/upcoming": {
             "get": {
                 "tags": [
                     "Trips"
                 ],
-                "summary": "List the authenticated user's upcoming trips",
-                "description": "List the authenticated user's upcoming trips, as driver or passenger.",
-                "operationId": "listCurrentTrips",
+                "summary": "List the authenticated user's scheduled trips",
+                "description": "List the authenticated user's scheduled trips, as driver or passenger.",
+                "operationId": "listUpcomingTrips",
                 "responses": {
                     "200": {
-                        "description": "List of upcoming trips",
+                        "description": "List of scheduled trips",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripCollectionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/ongoing": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "List the authenticated user's ongoing trips",
+                "description": "List the authenticated user's ongoing trips, as driver or passenger.",
+                "operationId": "listOngoingTrips",
+                "responses": {
+                    "200": {
+                        "description": "List of ongoing trips",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -915,6 +952,237 @@
                     },
                     "404": {
                         "description": "Trip not found (`NOT_FOUND`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}/start": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Start a trip",
+                "description": "Start a trip the user drives: scheduled → ongoing.",
+                "operationId": "startTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip started",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden, only the driver may start the trip (`UNAUTHORIZED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found (`NOT_FOUND`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The trip is not scheduled (`TRIP_STATUS_TRANSITION_INVALID`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}/complete": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Complete a trip",
+                "description": "Complete a trip the user drives: ongoing → completed.",
+                "operationId": "completeTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden, only the driver may complete the trip (`UNAUTHORIZED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found (`NOT_FOUND`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The trip is not ongoing (`TRIP_STATUS_TRANSITION_INVALID`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/trips/{trip}/cancel": {
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Cancel a trip",
+                "description": "Cancel a trip the user drives: scheduled or ongoing → cancelled.",
+                "operationId": "cancelTrip",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Trip cancelled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TripResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated (`UNAUTHENTICATED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden, only the driver may cancel the trip (`UNAUTHORIZED`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Trip not found (`NOT_FOUND`).",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "The trip has already finished (`TRIP_STATUS_TRANSITION_INVALID`).",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1905,6 +2173,16 @@
                         "type": "boolean",
                         "example": true
                     },
+                    "status": {
+                        "type": "string",
+                        "example": "scheduled",
+                        "enum": [
+                            "scheduled",
+                            "ongoing",
+                            "completed",
+                            "cancelled"
+                        ]
+                    },
                     "role": {
                         "type": "string",
                         "example": "driver",
@@ -1916,6 +2194,32 @@
                     "passengers_count": {
                         "type": "integer",
                         "example": 2
+                    },
+                    "started_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "ended_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "driver": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/TripParticipant"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "vehicle": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Vehicle"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
@@ -2118,7 +2422,7 @@
             },
             "ApiError": {
                 "title": "Error envelope",
-                "description": "Every error response shares this shape. `code` is the stable, machine-readable identifier the client should use to resolve a localized message; `message` is an English developer/human fallback and may change. Codes returned per endpoint are listed in that endpoint's response descriptions. Legend: `VALIDATION_FAILED` (422, request body failed rules; per-field detail under `errors`), `UNAUTHENTICATED` (401), `UNAUTHORIZED` (403, policy denied), `NOT_FOUND` (404, modeled resource missing), `ENDPOINT_NOT_FOUND` (404, unknown route), `METHOD_NOT_ALLOWED` (405), `TOO_MANY_REQUESTS` (429, throttled), `SERVER_ERROR` (500), `OTP_INVALID` (422, code invalid/expired/used up), `OTP_REQUEST_THROTTLED` (422, code requested too soon), `IDENTITY_VERIFICATION_IN_PROGRESS` (409), `IDENTITY_ALREADY_VERIFIED` (409), `TRIP_FULL` (422), `TRIP_ALREADY_JOINED` (422).",
+                "description": "Every error response shares this shape. `code` is the stable, machine-readable identifier the client should use to resolve a localized message; `message` is an English developer/human fallback and may change. Codes returned per endpoint are listed in that endpoint's response descriptions. Legend: `VALIDATION_FAILED` (422, request body failed rules; per-field detail under `errors`), `UNAUTHENTICATED` (401), `UNAUTHORIZED` (403, policy denied), `NOT_FOUND` (404, modeled resource missing), `ENDPOINT_NOT_FOUND` (404, unknown route), `METHOD_NOT_ALLOWED` (405), `TOO_MANY_REQUESTS` (429, throttled), `SERVER_ERROR` (500), `OTP_INVALID` (422, code invalid/expired/used up), `OTP_REQUEST_THROTTLED` (422, code requested too soon), `IDENTITY_VERIFICATION_IN_PROGRESS` (409), `IDENTITY_ALREADY_VERIFIED` (409), `TRIP_FULL` (422), `TRIP_ALREADY_JOINED` (422), `TRIP_STATUS_TRANSITION_INVALID` (409, illegal lifecycle transition).",
                 "properties": {
                     "success": {
                         "type": "boolean",
@@ -2146,7 +2450,8 @@
                             "IDENTITY_VERIFICATION_IN_PROGRESS",
                             "IDENTITY_ALREADY_VERIFIED",
                             "TRIP_FULL",
-                            "TRIP_ALREADY_JOINED"
+                            "TRIP_ALREADY_JOINED",
+                            "TRIP_STATUS_TRANSITION_INVALID"
                         ]
                     },
                     "errors": {
