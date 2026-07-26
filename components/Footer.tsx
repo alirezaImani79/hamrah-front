@@ -9,6 +9,13 @@ const links = [
   { href: "#faq", label: "سؤالای پرتکرار" },
 ];
 
+// نماد اعتماد الکترونیک (eNamad) — the seal/URL pair are issued per-site;
+// both endpoints expect the same id + Code.
+const ENAMAD_ID = "7039103";
+const ENAMAD_CODE = "HOrPXAoVcoBgAZfwSy18FEtdxYSjLk1g";
+const enamadHref = `https://trustseal.enamad.ir/?id=${ENAMAD_ID}&Code=${ENAMAD_CODE}`;
+const enamadLogoSrc = `https://trustseal.enamad.ir/logo.aspx?id=${ENAMAD_ID}&Code=${ENAMAD_CODE}`;
+
 export default function Footer() {
   return (
     <footer className="mt-auto bg-brand-50/40">
@@ -38,9 +45,28 @@ export default function Footer() {
 
         <Separator className="my-8 bg-brand-100" />
 
-        <p className="text-center text-sm text-muted-foreground">
-          © ۱۴۰۵ همراه — ساخته‌شده با 💚 برای ایران
-        </p>
+        <div className="flex flex-col items-center gap-5">
+          <a
+            referrerPolicy="origin"
+            target="_blank"
+            href={enamadHref}
+            aria-label="نماد اعتماد الکترونیک"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- eNamad serves a dynamic tracking seal that must be loaded from their host as a plain <img>. */}
+            <img
+              referrerPolicy="origin"
+              src={enamadLogoSrc}
+              alt="نماد اعتماد الکترونیک"
+              className="h-18 w-auto"
+              style={{ cursor: "pointer" }}
+              {...({ code: ENAMAD_CODE } as { code: string })}
+            />
+          </a>
+
+          <p className="text-center text-sm text-muted-foreground">
+            © ۱۴۰۵ همراه — ساخته‌شده با 💚 برای ایران
+          </p>
+        </div>
       </div>
     </footer>
   );
