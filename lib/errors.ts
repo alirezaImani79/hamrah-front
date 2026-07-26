@@ -36,7 +36,8 @@ export type ErrorCode =
   | "IDENTITY_VERIFICATION_IN_PROGRESS"
   | "IDENTITY_ALREADY_VERIFIED"
   | "TRIP_FULL"
-  | "TRIP_ALREADY_JOINED";
+  | "TRIP_ALREADY_JOINED"
+  | "TRIP_STATUS_TRANSITION_INVALID";
 
 /**
  * Persian copy for well-known codes. (`VALIDATION_FAILED` is handled separately
@@ -52,6 +53,7 @@ const CODE_MESSAGES: Partial<Record<ErrorCode, string>> = {
   IDENTITY_ALREADY_VERIFIED: "هویتت قبلاً تأیید شده.",
   TRIP_FULL: "ظرفیت این سفر پر شده.",
   TRIP_ALREADY_JOINED: "تو قبلاً هم‌سفر این سفر شدی.",
+  TRIP_STATUS_TRANSITION_INVALID: "این سفر دیگه قابل لغو نیست.",
   UNAUTHENTICATED: "نشستت منقضی شده؛ برای ادامه دوباره وارد شو.",
   UNAUTHORIZED: "اجازه انجام این کار رو نداری.",
   TOO_MANY_REQUESTS: "تعداد درخواست‌ها زیاد شد؛ کمی صبر کن و دوباره امتحان کن.",

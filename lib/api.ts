@@ -84,6 +84,22 @@ export type LatLng = {
 /** Whether the authenticated user drives this trip or has joined it. */
 export type TripRole = "driver" | "passenger";
 
+/** Trip lifecycle as returned by the backend. */
+export type TripStatus = "scheduled" | "ongoing" | "completed" | "cancelled";
+
+/**
+ * A user as seen by fellow riders on a shared trip (driver or passenger).
+ * Exposes only what fellow riders need — never sensitive own-profile fields.
+ */
+export type TripParticipant = {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  gender: Gender | null;
+  phone_number: string;
+  is_identity_verified: boolean;
+};
+
 export type Trip = {
   id: number;
   vehicle_id: number;
@@ -93,8 +109,17 @@ export type Trip = {
   departure_at: string;
   empty_seats: number;
   trunk_empty: boolean;
+  status: TripStatus;
   role: TripRole;
   passengers_count: number;
+  /** Set once the driver starts the trip; null until then. */
+  started_at: string | null;
+  /** Set once the trip is completed; null until then. */
+  ended_at: string | null;
+  /** The driver, when the listing payload includes them (null for own-profile gaps). */
+  driver: TripParticipant | null;
+  /** The trip's vehicle, when the listing payload includes it. */
+  vehicle: Vehicle | null;
   created_at: string;
   updated_at: string;
 };

@@ -2,7 +2,11 @@
 // Maps onto /api/v1/trips (list, create) and /api/v1/trips/{id} (show, update,
 // delete). Every call needs the Sanctum bearer token.
 
-import { apiFetch, type Gender, type Trip, type Vehicle } from "@/lib/api";
+import { apiFetch, type Trip, type TripParticipant } from "@/lib/api";
+
+// `TripParticipant` now lives in `lib/api.ts` (alongside `Trip`/`Vehicle`); keep
+// re-exporting it from here so existing imports (`@/lib/trips`) stay intact.
+export type { TripParticipant };
 
 /**
  * Create/update payload. The backend takes flat lat/lng fields (not the nested
@@ -25,9 +29,14 @@ export function listTrips(token: string): Promise<Trip[]> {
   return apiFetch<Trip[]>("/api/v1/trips", { token });
 }
 
-/** Upcoming trips the user drives or has joined. */
-export function listCurrentTrips(token: string): Promise<Trip[]> {
-  return apiFetch<Trip[]>("/api/v1/trips/current", { token });
+/** Ongoing trips the user drives or has joined. */
+export function listOngoingTrips(token: string): Promise<Trip[]> {
+  return apiFetch<Trip[]>("/api/v1/trips/ongoing", { token });
+}
+
+/** Scheduled (upcoming) trips the user drives or has joined. */
+export function listUpcomingTrips(token: string): Promise<Trip[]> {
+  return apiFetch<Trip[]>("/api/v1/trips/upcoming", { token });
 }
 
 /** Past trips the user drove or joined. */
@@ -64,6 +73,18 @@ export function updateTrip(
 export function deleteTrip(token: string, id: number): Promise<null> {
   return apiFetch<null>(`/api/v1/trips/${id}`, {
     method: "DELETE",
+    token,
+  });
+}
+
+/**
+ * Cancel a trip the user drives: scheduled or ongoing → cancelled.
+ * Driver-only; the backend rejects passengers with `UNAUTHORIZED` (403) and an
+ * already-finished trip with `TRIP_STATUS_TRANSITION_INVALID` (409).
+ */
+export function cancelTrip(token: string, id: number): Promise<Trip> {
+  return apiFetch<Trip>(`/api/v1/trips/${id}/cancel`, {
+    method: "POST",
     token,
   });
 }
@@ -127,20 +148,12 @@ export function joinTrip(token: string, id: number): Promise<Trip> {
 
 // ─── Trip detail (driver, vehicle, passengers) ────────────────────────────
 
-/** A user as seen by fellow riders on a shared trip (driver or passenger). */
-export type TripParticipant = {
-  id: number;
-  first_name: string | null;
-  last_name: string | null;
-  gender: Gender | null;
-  phone_number: string;
-  is_identity_verified: boolean;
-};
-
-/** A trip enriched with its driver, vehicle, and signed-up passengers. */
+/**
+ * A trip enriched with its signed-up passengers. `driver` and `vehicle` already
+ * live on `Trip` (the backend returns them inline); the detail endpoint adds
+ * the passenger roster.
+ */
 export type TripDetail = Trip & {
-  driver: TripParticipant | null;
-  vehicle: Vehicle | null;
   passengers: TripParticipant[];
 };
 
