@@ -61,7 +61,7 @@ export default function DashboardPage() {
         </h1>
         <p className="mt-2 max-w-xl text-pretty leading-8 text-muted-foreground">
           سفرهای در حال انجام و پیش‌روت رو این‌جا ببین و مدیریت کن. می‌تونی سفر
-          جدید ثبت کنی، هم‌سفر پیدا کنی یا—in صورت نیاز—سفرت رو لغو کنی.
+          جدید ثبت کنی، هم‌سفر پیدا کنی یا—در صورت نیاز—سفرت رو لغو کنی.
         </p>
       </section>
 

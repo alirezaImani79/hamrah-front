@@ -34,6 +34,16 @@ export function InputOTP({
   "aria-label": ariaLabel,
 }: InputOTPProps) {
   const inputs = React.useRef<Array<HTMLInputElement | null>>([]);
+  // Mirror of `value` that stays fresh within a synchronous change→focus cycle.
+  // When `handleChange` moves focus to the next box, the browser fires `onFocus`
+  // synchronously — before React re-renders — so the `value` closure in the
+  // focus handler is one render stale (still the pre-keystroke value). Without
+  // the ref, `handleFocus` would see the freshly-typed box as a gap and bounce
+  // focus back to the previous box, so the next keystroke overwrites it.
+  const valueRef = React.useRef(value);
+  React.useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
 
   function focusAt(index: number) {
     const clamped = Math.max(0, Math.min(index, length - 1));
@@ -47,6 +57,9 @@ export function InputOTP({
   function commit(next: string) {
     const trimmed = next.slice(0, length);
     const justCompleted = trimmed.length === length && value.length < length;
+    // Sync the ref BEFORE onChange/focus so the synchronous focus event kicked
+    // off by a later `focusAt` sees the new value, not the pre-keystroke one.
+    valueRef.current = trimmed;
     onChange(trimmed);
     if (justCompleted) onComplete?.(trimmed);
     return trimmed;
@@ -92,8 +105,11 @@ export function InputOTP({
     index: number,
     event: React.FocusEvent<HTMLInputElement>,
   ) {
-    // Keep entry sequential — jump to the first empty box, no gaps.
-    if (index > value.length) focusAt(value.length);
+    // Keep entry sequential — jump to the first empty box, no gaps. Read the
+    // ref (not the closure) so this stays correct even when focus landed here
+    // programmatically during `handleChange`, before the next render commits.
+    const current = valueRef.current;
+    if (index > current.length) focusAt(current.length);
     else event.currentTarget.select();
   }
 
